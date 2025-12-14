@@ -1,16 +1,87 @@
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
+* {
+  box-sizing: border-box;
 }
 
-button {
-  padding: 10px 20px;
-  margin: 10px;
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #f5f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #1f2937;
+}
+
+.app {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+header {
+  padding: 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+header p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+main {
+  padding: 20px;
 }
 
 video {
-  width: 300px;
-  margin-top: 10px;
+  width: 100%;
+  border-radius: 10px;
+  background: #000;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+button {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button.in {
+  background: #2563eb;
+  color: white;
+}
+
+button.out {
+  background: #111827;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#log {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #374151;
 }
 
 canvas {
