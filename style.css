@@ -2,40 +2,73 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #2563eb;
+  --secondary: #111827;
+}
+
+body.dark {
+  --bg: #0f172a;
+  --card: #020617;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: #1f2937;
+  --primary: #38bdf8;
+  --secondary: #020617;
+}
+
 body {
   margin: 0;
   font-family: Inter, Arial, sans-serif;
-  background: #f5f7fb;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  color: #1f2937;
+  transition: background 0.3s, color 0.3s;
 }
 
 .app {
   width: 420px;
-  background: #ffffff;
+  background: var(--card);
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   overflow: hidden;
 }
 
 header {
-  padding: 22px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
 }
 
 header p {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
   font-size: 13px;
-  color: #6b7280;
+  color: var(--muted);
+}
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 main {
@@ -45,7 +78,7 @@ main {
 video {
   width: 100%;
   border-radius: 10px;
-  background: #000;
+  background: black;
 }
 
 .buttons {
@@ -57,20 +90,19 @@ video {
 button {
   flex: 1;
   padding: 12px 0;
-  border-radius: 10px;
   border: none;
+  border-radius: 10px;
   font-size: 15px;
-  font-weight: 500;
   cursor: pointer;
 }
 
 button.in {
-  background: #2563eb;
+  background: var(--primary);
   color: white;
 }
 
 button.out {
-  background: #111827;
+  background: var(--secondary);
   color: white;
 }
 
@@ -81,9 +113,4 @@ button:hover {
 #log {
   margin-top: 18px;
   font-size: 14px;
-  color: #374151;
-}
-
-canvas {
-  display: none;
 }
