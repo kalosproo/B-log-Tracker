@@ -1,21 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>B-log Tracker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>B-log Tracker</h2>
-<p>Check In / Check Out System</p>
+<div class="app">
+  <header>
+    <h1>B-log Tracker</h1>
+    <p>Professional Check In / Check Out System</p>
+  </header>
 
-<button onclick="startCamera('Check In')">Check In</button>
-<button onclick="startCamera('Check Out')">Check Out</button>
+  <main>
+    <video id="video" autoplay></video>
 
-<video id="video" autoplay></video>
+    <div class="buttons">
+      <button class="in" onclick="startCamera('Check In')">Check In</button>
+      <button class="out" onclick="startCamera('Check Out')">Check Out</button>
+    </div>
+
+    <div id="log"></div>
+  </main>
+</div>
+
 <canvas id="canvas"></canvas>
-
-<p id="log"></p>
 
 <script src="script.js"></script>
 </body>
