@@ -9,11 +9,8 @@
 
 <div class="app">
   <header>
-    <div>
-      <h1>B-log Tracker</h1>
-      <p>Professional Check In / Check Out System</p>
-    </div>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <h1>B-log Tracker</h1>
+    <p>Professional Check In / Check Out System</p>
   </header>
 
   <main>
@@ -30,6 +27,15 @@
 
 <canvas id="canvas"></canvas>
 
+<!-- Firebase SDKs (COMPAT) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<!-- Separate Firebase config file -->
+<script src="firebase.js"></script>
+
+<!-- App logic -->
 <script src="script.js"></script>
+
 </body>
 </html>
