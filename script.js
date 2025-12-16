@@ -1,10 +1,8 @@
 let actionType = "";
 let streamRef = null;
-let cameraReady = false;
 
 function startCamera(type) {
   actionType = type;
-  cameraReady = false;
 
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
@@ -12,10 +10,11 @@ function startCamera(type) {
       const video = document.getElementById("video");
       video.srcObject = stream;
 
-      video.onloadedmetadata = () => {
-        cameraReady = true;
-        saveLog(); // save ONLY after camera is really ready
-      };
+      // wait for real playback
+      video.play();
+
+      // give camera a moment, then save
+      setTimeout(saveLog, 1200);
     })
     .catch(err => {
       alert("Camera error: " + err.message);
@@ -23,15 +22,6 @@ function startCamera(type) {
 }
 
 function saveLog() {
-  if (!cameraReady) return;
-
-  // stop camera AFTER capture moment
-  setTimeout(() => {
-    if (streamRef) {
-      streamRef.getTracks().forEach(track => track.stop());
-    }
-  }, 500);
-
   const now = new Date();
 
   const logData = {
@@ -45,11 +35,20 @@ function saveLog() {
     .then(() => {
       document.getElementById("message").innerText =
         actionType + " recorded successfully";
+
+      stopCamera();
       loadLogs();
     })
     .catch(err => {
       alert("Firestore error: " + err.message);
     });
+}
+
+function stopCamera() {
+  if (streamRef) {
+    streamRef.getTracks().forEach(track => track.stop());
+    streamRef = null;
+  }
 }
 
 function loadLogs() {
@@ -67,3 +66,16 @@ function loadLogs() {
       }
 
       snapshot.forEach(doc => {
+        const d = doc.data();
+        const row = document.createElement("div");
+        row.className = "log-item";
+        row.innerHTML = `
+          <div>${d.action}</div>
+          <span>${d.date} • ${d.time}</span>
+        `;
+        list.appendChild(row);
+      });
+    });
+}
+
+window.onload = loadLogs;
