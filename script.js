@@ -53,6 +53,9 @@ function saveLog(actionType) {
 function stopCamera() {
   if (streamRef) {
     streamRef.getTracks().forEach(track => track.stop());
+    document.getElementById("video").style.display = "none";
+document.getElementById("cameraPlaceholder").style.display = "flex";
+
     streamRef = null;
   }
 }
