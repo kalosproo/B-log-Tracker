@@ -1,27 +1,24 @@
-let actionType = "";
 let streamRef = null;
 
-function startCamera(type) {
-  actionType = type;
+function startCamera(actionType) {
 
+  // 1. Start camera (for visual proof only)
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
       streamRef = stream;
       const video = document.getElementById("video");
       video.srcObject = stream;
-
-      // wait for real playback
       video.play();
-
-      // give camera a moment, then save
-      setTimeout(saveLog, 1200);
     })
     .catch(err => {
-      alert("Camera error: " + err.message);
+      console.warn("Camera warning:", err.message);
     });
+
+  // 2. SAVE LOG IMMEDIATELY (do NOT wait for camera)
+  saveLog(actionType);
 }
 
-function saveLog() {
+function saveLog(actionType) {
   const now = new Date();
 
   const logData = {
@@ -31,16 +28,21 @@ function saveLog() {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
+  console.log("Saving log:", logData);
+
   db.collection("logs").add(logData)
     .then(() => {
       document.getElementById("message").innerText =
         actionType + " recorded successfully";
 
-      stopCamera();
       loadLogs();
+
+      // stop camera after save
+      stopCamera();
     })
     .catch(err => {
-      alert("Firestore error: " + err.message);
+      console.error("Firestore ERROR:", err);
+      alert("Log not saved. Check console.");
     });
 }
 
@@ -75,6 +77,9 @@ function loadLogs() {
         `;
         list.appendChild(row);
       });
+    })
+    .catch(err => {
+      console.error("Load logs error:", err);
     });
 }
 
