@@ -1,36 +1,55 @@
 let actionType = "";
 let streamRef = null;
+let cameraReady = false;
 
 function startCamera(type) {
   actionType = type;
+  cameraReady = false;
 
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
       streamRef = stream;
-      document.getElementById("video").srcObject = stream;
-      setTimeout(saveLog, 2000);
+      const video = document.getElementById("video");
+      video.srcObject = stream;
+
+      video.onloadedmetadata = () => {
+        cameraReady = true;
+        saveLog(); // save ONLY after camera is really ready
+      };
+    })
+    .catch(err => {
+      alert("Camera error: " + err.message);
     });
 }
 
 function saveLog() {
-  if (streamRef) {
-    streamRef.getTracks().forEach(t => t.stop());
-  }
+  if (!cameraReady) return;
+
+  // stop camera AFTER capture moment
+  setTimeout(() => {
+    if (streamRef) {
+      streamRef.getTracks().forEach(track => track.stop());
+    }
+  }, 500);
 
   const now = new Date();
 
-  const data = {
+  const logData = {
     action: actionType,
     date: now.toLocaleDateString(),
     time: now.toLocaleTimeString(),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  db.collection("logs").add(data).then(() => {
-    document.getElementById("message").innerText =
-      `${actionType} recorded at ${data.time}`;
-    loadLogs();
-  });
+  db.collection("logs").add(logData)
+    .then(() => {
+      document.getElementById("message").innerText =
+        actionType + " recorded successfully";
+      loadLogs();
+    })
+    .catch(err => {
+      alert("Firestore error: " + err.message);
+    });
 }
 
 function loadLogs() {
@@ -42,17 +61,9 @@ function loadLogs() {
       const list = document.getElementById("logList");
       list.innerHTML = "";
 
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        const row = document.createElement("div");
-        row.className = "log-item";
-        row.innerHTML = `
-          <div>${d.action}</div>
-          <span>${d.date} • ${d.time}</span>
-        `;
-        list.appendChild(row);
-      });
-    });
-}
+      if (snapshot.empty) {
+        list.innerHTML = "<p style='color:#9ca3af'>No logs yet</p>";
+        return;
+      }
 
-loadLogs();
+      snapshot.forEach(doc => {
