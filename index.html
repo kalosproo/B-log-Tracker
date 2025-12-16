@@ -19,7 +19,13 @@
     <h2>Actions</h2>
     <p class="hint">Click check in or out. Camera will capture proof.</p>
 
-    <video id="video"playsinline></video>
+    <div class="camera-box">
+  <video id="video" playsinline></video>
+  <div id="cameraPlaceholder" class="camera-placeholder">
+    Camera captured successfully
+  </div>
+</div>
+
 
     <div class="buttons">
       <button class="check-in" onclick="startCamera('Check In')">Check In</button>
