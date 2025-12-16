@@ -5,6 +5,7 @@ const firebaseConfig = {
   storageBucket: "b-log-tracker-0101.appspot.com",
   messagingSenderId: "230746196644",
   appId: "1:230746196644:web:a76ade1f41bfc5b83bf431",
+   measurementId: "G-2EYFQKE1DC"
 };
 
 firebase.initializeApp(firebaseConfig);
