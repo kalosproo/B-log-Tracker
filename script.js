@@ -7,6 +7,10 @@ function startCamera(actionType) {
     .then(stream => {
       streamRef = stream;
       const video = document.getElementById("video");
+        // 👇 ADD THESE LINES
+  document.getElementById("cameraPlaceholder").style.display = "none";
+  video.style.display = "block";
+
       video.srcObject = stream;
       video.play();
     })
