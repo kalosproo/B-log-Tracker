@@ -167,3 +167,100 @@ input {
   margin-bottom: 10px;
   border: none;
 }
+/* ---------- APP LAYOUT POLISH ---------- */
+
+/* Center whole app nicely */
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar fix */
+.topbar {
+  max-width: 900px;
+  margin: 20px auto 10px;
+  border-radius: 14px;
+  background: #020617;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Logout button polish */
+.topbar button {
+  background: #ef4444;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Main container */
+.container {
+  max-width: 900px;
+  margin: 10px auto 40px;
+  padding: 0 16px;
+  display: grid;
+  gap: 24px;
+}
+
+/* Cards polish */
+.card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.01)
+  );
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* Section titles */
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Action buttons */
+.buttons {
+  display: flex;
+  gap: 14px;
+}
+
+.check-in,
+.check-out {
+  flex: 1;
+  height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+/* Softer colors */
+.check-in {
+  background: #22c55e;
+  color: #022c22;
+}
+
+.check-out {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* Attendance log */
+.log-item {
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.log-item span {
+  font-weight: 500;
+}
+
+.log-item small {
+  color: #9ca3af;
+}
