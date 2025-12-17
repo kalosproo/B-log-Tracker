@@ -106,3 +106,28 @@ button {
   padding: 10px 0;
   border-top: 1px solid rgba(255,255,255,0.08);
 }
+/* AUTH TABS */
+.auth-tabs {
+  display: flex;
+  background: #0b1220;
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.auth-tabs button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.auth-tabs button.active {
+  background: #4f6ef7;
+  color: white;
+  font-weight: 600;
+}
+
