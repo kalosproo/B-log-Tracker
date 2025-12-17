@@ -59,7 +59,13 @@ function logout() {
 
 // Log action
 function logAction(type) {
+  if (!auth.currentUser) {
+    alert("User not logged in");
+    return;
+  }
+
   const now = new Date();
+  console.log("Logging for UID:", auth.currentUser.uid);
 
   db.collection("logs").add({
     user: auth.currentUser.uid,
@@ -70,17 +76,27 @@ function logAction(type) {
   }).then(() => {
     message.innerText = type + " recorded";
     loadLogs();
+  }).catch(err => {
+    console.error("Log save error:", err);
   });
 }
 
+
 // Load logs
 function loadLogs() {
+  if (!auth.currentUser) return;
+
   db.collection("logs")
     .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
-    .get()
-    .then(snapshot => {
+    .onSnapshot(snapshot => {
       logList.innerHTML = "";
+
+      if (snapshot.empty) {
+        logList.innerHTML = "<p style='color:#9ca3af'>No logs yet</p>";
+        return;
+      }
+
       snapshot.forEach(doc => {
         const d = doc.data();
         logList.innerHTML += `
@@ -90,5 +106,7 @@ function loadLogs() {
           </div>
         `;
       });
+    }, err => {
+      console.error("Load logs error:", err);
     });
 }
