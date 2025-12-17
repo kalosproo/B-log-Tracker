@@ -23,26 +23,45 @@ function startCamera(actionType) {
 }
 
 function saveLog(actionType) {
-  const now = new Date();
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
 
-  const logData = {
-    action: actionType,
-    date: now.toLocaleDateString(),
-    time: now.toLocaleTimeString(),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
 
-  console.log("Saving log:", logData);
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  db.collection("logs").add(logData)
-    .then(() => {
-      document.getElementById("message").innerText =
-        actionType + " recorded successfully";
+  canvas.toBlob(blob => {
+    const now = new Date();
+    const fileName = `logs/${now.getTime()}_${actionType}.jpg`;
+    const ref = storage.ref().child(fileName);
 
-      loadLogs();
+    ref.put(blob).then(snapshot => {
+      snapshot.ref.getDownloadURL().then(photoURL => {
 
-      // stop camera after save
-      stopCamera();
+        const logData = {
+          action: actionType,
+          date: now.toLocaleDateString(),
+          time: now.toLocaleTimeString(),
+          photo: photoURL,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        db.collection("logs").add(logData).then(() => {
+          document.getElementById("message").innerText =
+            actionType + " + photo saved";
+
+          loadLogs();
+          stopCamera(); // ✅ ONLY ONCE
+        });
+
+      });
+    });
+  }, "image/jpeg");
+}
+
+
     })
     .catch(err => {
       console.error("Firestore ERROR:", err);
