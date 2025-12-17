@@ -5,12 +5,6 @@ body {
   font-family: Inter, Arial, sans-serif;
   background: radial-gradient(circle at top, #0f172a, #020617);
   color: #e5e7eb;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .hidden {
   display: none;
 }
@@ -170,11 +164,6 @@ input {
 /* ---------- APP LAYOUT POLISH ---------- */
 
 /* Center whole app nicely */
-#app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
 
 /* Topbar fix */
 .topbar {
@@ -264,3 +253,102 @@ input {
 .log-item small {
   color: #9ca3af;
 }
+  /* ================= APP DASHBOARD LAYOUT ================= */
+
+/* App wrapper */
+#app {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+}
+
+/* Topbar – full width, fixed position */
+.topbar {
+  width: 100%;
+  height: 64px;
+  padding: 0 24px;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+/* Logout button */
+.topbar button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Main content */
+.container {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: grid;
+  gap: 24px;
+}
+
+/* Cards */
+.card {
+  background: #020617;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* Card titles */
+.card h2 {
+  margin: 0 0 18px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Action buttons */
+.buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.check-in,
+.check-out {
+  flex: 1;
+  height: 46px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Colors */
+.check-in {
+  background: #22c55e;
+  color: #022c22;
+}
+
+.check-out {
+  background: #ef4444;
+  color: white;
+}
+
+/* Logs */
+.log-item {
+  padding: 12px 0;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.log-item small {
+  color: #9ca3af;
+}
+
