@@ -1,27 +1,33 @@
-const loginBox = document.getElementById("loginBox");
+const authBox = document.getElementById("authBox");
 const app = document.getElementById("app");
 
-// Auth state
 auth.onAuthStateChanged(user => {
   if (user) {
-    loginBox.classList.add("hidden");
+    authBox.classList.add("hidden");
     app.classList.remove("hidden");
     loadLogs();
   } else {
     app.classList.add("hidden");
-    loginBox.classList.remove("hidden");
+    authBox.classList.remove("hidden");
   }
 });
 
-// Login
+// Email login
 function login() {
-  const email = email.value;
-  const password = password.value;
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => authError.innerText = err.message);
+}
 
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(err => {
-      document.getElementById("loginError").innerText = err.message;
-    });
+// Sign up
+function signup() {
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+    .catch(err => authError.innerText = err.message);
+}
+
+// Google login
+function googleLogin() {
+  auth.signInWithPopup(provider)
+    .catch(err => authError.innerText = err.message);
 }
 
 // Logout
@@ -29,19 +35,18 @@ function logout() {
   auth.signOut();
 }
 
-// Log check-in / check-out
+// Log action
 function logAction(type) {
   const now = new Date();
 
   db.collection("logs").add({
-    user: auth.currentUser.email,
+    user: auth.currentUser.uid,
     action: type,
     date: now.toLocaleDateString(),
     time: now.toLocaleTimeString(),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(() => {
-    document.getElementById("message").innerText =
-      type + " recorded successfully";
+    message.innerText = type + " recorded";
     loadLogs();
   });
 }
@@ -49,22 +54,19 @@ function logAction(type) {
 // Load logs
 function loadLogs() {
   db.collection("logs")
-    .where("user", "==", auth.currentUser.email)
+    .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
     .get()
     .then(snapshot => {
-      const list = document.getElementById("logList");
-      list.innerHTML = "";
-
+      logList.innerHTML = "";
       snapshot.forEach(doc => {
         const d = doc.data();
-        const row = document.createElement("div");
-        row.className = "log-item";
-        row.innerHTML = `
-          <div>${d.action}</div>
-          <span>${d.date} • ${d.time}</span>
+        logList.innerHTML += `
+          <div class="log-item">
+            <span>${d.action}</span>
+            <small>${d.date} • ${d.time}</small>
+          </div>
         `;
-        list.appendChild(row);
       });
     });
 }
