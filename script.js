@@ -1,74 +1,60 @@
-let streamRef = null;
+const loginBox = document.getElementById("loginBox");
+const app = document.getElementById("app");
 
-function startCamera(actionType) {
+// Auth state
+auth.onAuthStateChanged(user => {
+  if (user) {
+    loginBox.classList.add("hidden");
+    app.classList.remove("hidden");
+    loadLogs();
+  } else {
+    app.classList.add("hidden");
+    loginBox.classList.remove("hidden");
+  }
+});
 
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-      streamRef = stream;
-      const video = document.getElementById("video");
+// Login
+function login() {
+  const email = email.value;
+  const password = password.value;
 
-      document.getElementById("cameraPlaceholder").style.display = "none";
-      video.style.display = "block";
-
-      video.srcObject = stream;
-      video.play();
-
-      // Save log immediately (no dependency on camera)
-      saveLog(actionType);
-    })
+  auth.signInWithEmailAndPassword(email, password)
     .catch(err => {
-      console.warn("Camera warning:", err.message);
-      saveLog(actionType); // still log even if camera fails
+      document.getElementById("loginError").innerText = err.message;
     });
 }
 
-function saveLog(actionType) {
+// Logout
+function logout() {
+  auth.signOut();
+}
+
+// Log check-in / check-out
+function logAction(type) {
   const now = new Date();
 
-  const logData = {
-    action: actionType,
+  db.collection("logs").add({
+    user: auth.currentUser.email,
+    action: type,
     date: now.toLocaleDateString(),
     time: now.toLocaleTimeString(),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-
-  db.collection("logs").add(logData)
-    .then(() => {
-      document.getElementById("message").innerText =
-        actionType + " recorded successfully";
-
-      loadLogs();
-      stopCamera();
-    })
-    .catch(err => {
-      console.error("Firestore error:", err);
-      alert("Log not saved");
-    });
+  }).then(() => {
+    document.getElementById("message").innerText =
+      type + " recorded successfully";
+    loadLogs();
+  });
 }
 
-function stopCamera() {
-  if (streamRef) {
-    streamRef.getTracks().forEach(track => track.stop());
-    streamRef = null;
-  }
-
-  document.getElementById("video").style.display = "none";
-  document.getElementById("cameraPlaceholder").style.display = "flex";
-}
-
+// Load logs
 function loadLogs() {
   db.collection("logs")
+    .where("user", "==", auth.currentUser.email)
     .orderBy("createdAt", "desc")
-    .limit(20)
     .get()
     .then(snapshot => {
       const list = document.getElementById("logList");
       list.innerHTML = "";
-
-      if (snapshot.empty) {
-        list.innerHTML = "<p style='color:#9ca3af'>No logs yet</p>";
-        return;
-      }
 
       snapshot.forEach(doc => {
         const d = doc.data();
@@ -82,5 +68,3 @@ function loadLogs() {
       });
     });
 }
-
-window.onload = loadLogs;
