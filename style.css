@@ -359,3 +359,20 @@ input {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+  /*time log*/
+  .log-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 14px;
+}
+
+.log-item span {
+  font-weight: 600;
+}
+
+.log-item small {
+  color: #9ca3af;
+}
+
