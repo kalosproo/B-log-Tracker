@@ -1,5 +1,27 @@
 const authBox = document.getElementById("authBox");
 const app = document.getElementById("app");
+const loginForm = document.getElementById("login-form");
+const signupForm = document.getElementById("signup-form");
+
+const tabLogin = document.getElementById("tab-login");
+const tabSignup = document.getElementById("tab-signup");
+
+function showLogin() {
+  loginForm.classList.remove("hidden");
+  signupForm.classList.add("hidden");
+
+  tabLogin.classList.add("active");
+  tabSignup.classList.remove("active");
+}
+
+function showSignup() {
+  signupForm.classList.remove("hidden");
+  loginForm.classList.add("hidden");
+
+  tabSignup.classList.add("active");
+  tabLogin.classList.remove("active");
+}
+
 
 auth.onAuthStateChanged(user => {
   if (user) {
