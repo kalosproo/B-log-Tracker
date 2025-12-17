@@ -8,41 +8,42 @@
 </head>
 <body>
 
-<header class="topbar">
-  <div class="brand">B-log Tracker</div>
-  <div class="status">● Camera Ready</div>
-</header>
+<!-- LOGIN -->
+<div id="loginBox" class="card center">
+  <h2>Login</h2>
+  <input id="email" type="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <p id="loginError"></p>
+</div>
 
-<div class="container">
+<!-- APP -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <div>B-log Tracker</div>
+    <button onclick="logout()">Logout</button>
+  </header>
 
-  <section class="card">
-    <h2>Actions</h2>
-    <p class="hint">Click check in or out. Camera is only for confirmation.</p>
-
-    <div class="camera-box">
-      <video id="video" playsinline></video>
-      <div id="cameraPlaceholder" class="camera-placeholder">
-        Camera off
+  <div class="container">
+    <div class="card">
+      <h2>Actions</h2>
+      <div class="buttons">
+        <button class="check-in" onclick="logAction('Check In')">Check In</button>
+        <button class="check-out" onclick="logAction('Check Out')">Check Out</button>
       </div>
+      <p id="message"></p>
     </div>
 
-    <div class="buttons">
-      <button class="check-in" onclick="startCamera('Check In')">Check In</button>
-      <button class="check-out" onclick="startCamera('Check Out')">Check Out</button>
+    <div class="card">
+      <h2>Attendance Log</h2>
+      <div id="logList"></div>
     </div>
-
-    <div id="message"></div>
-  </section>
-
-  <section class="card">
-    <h2>Attendance Log</h2>
-    <div id="logList"></div>
-  </section>
-
+  </div>
 </div>
 
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script src="firebase.js"></script>
