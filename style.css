@@ -31,8 +31,10 @@ body {
 
 input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 9px 12px;   /* reduced vertical padding */
+  font-size: 14px;     /* smaller text */
+  line-height: 1.2;    /* tighter text */
+  margin-bottom: 10px;
   border-radius: 10px;
   border: none;
 }
