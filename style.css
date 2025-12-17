@@ -155,3 +155,15 @@ input {
   padding: 10px 0;
   border-top: 1px solid rgba(255,255,255,0.08);
 }
+/* ---- INPUT SIZE FIX (FINAL) ---- */
+input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 36px;          /* 🔑 smaller height */
+  padding: 0 10px;      /* 🔑 no vertical padding */
+  font-size: 13px;      /* 🔑 slightly smaller text */
+  line-height: 36px;    /* 🔑 vertical centering */
+  border-radius: 8px;   /* 🔑 less pill-like */
+  margin-bottom: 10px;
+  border: none;
+}
