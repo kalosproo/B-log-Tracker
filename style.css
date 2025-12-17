@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0b1220;
+  font-family: Inter, Arial, sans-serif;
+  background: radial-gradient(circle at top, #111827, #020617);
   color: #e5e7eb;
 }
 
@@ -9,60 +9,100 @@ body {
   display: none;
 }
 
-.center {
-  max-width: 320px;
+/* AUTH */
+.auth-container {
+  max-width: 360px;
   margin: 100px auto;
+  background: #020617;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
 }
 
-.card {
-  background: #020617;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 16px;
+.auth-container h1 {
+  margin-bottom: 4px;
+}
+
+.sub {
+  color: #9ca3af;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
   border: none;
 }
 
 button {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
-.check-in {
+.primary {
   background: #4f6ef7;
   color: white;
 }
 
-.check-out {
-  background: #374151;
-  color: white;
+.google {
+  background: white;
+  color: black;
+  font-weight: 600;
 }
 
+.divider {
+  text-align: center;
+  color: #9ca3af;
+  margin: 10px 0;
+}
+
+/* APP */
 .topbar {
   display: flex;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 16px 20px;
   background: #020617;
+}
+
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 20px;
+}
+
+.card {
+  background: #020617;
+  padding: 20px;
+  border-radius: 16px;
 }
 
 .buttons {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+}
+
+.check-in {
+  background: #22c55e;
+  color: black;
+}
+
+.check-out {
+  background: #ef4444;
+  color: white;
 }
 
 .log-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
