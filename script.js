@@ -84,29 +84,63 @@ function logAction(type) {
 
 // Load logs
 function loadLogs() {
-  if (!auth.currentUser) return;
+  const uid = auth.currentUser.uid;
 
   db.collection("logs")
-    .where("user", "==", auth.currentUser.uid)
-    .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
+    .where("user", "==", uid)
+    .orderBy("createdAt", "asc")
+    .get()
+    .then(snapshot => {
+      const logList = document.getElementById("logList");
       logList.innerHTML = "";
 
-      if (snapshot.empty) {
-        logList.innerHTML = "<p style='color:#9ca3af'>No logs yet</p>";
-        return;
-      }
+      const grouped = {};
 
       snapshot.forEach(doc => {
-        const d = doc.data();
-        logList.innerHTML += `
-          <div class="log-item">
-            <span>${d.action}</span>
-            <small>${d.date} • ${d.time}</small>
-          </div>
-        `;
+        const data = doc.data();
+        if (!data.createdAt) return;
+
+        const date = data.createdAt.toDate().toLocaleDateString();
+
+        if (!grouped[date]) grouped[date] = [];
+        grouped[date].push(data);
       });
-    }, err => {
+
+      // Process each day
+      for (const date in grouped) {
+        let totalMs = 0;
+        let lastCheckIn = null;
+
+        grouped[date].forEach(log => {
+          const time = log.createdAt.toDate();
+
+          if (log.action === "Check In") {
+            lastCheckIn = time;
+          }
+
+          if (log.action === "Check Out" && lastCheckIn) {
+            totalMs += time - lastCheckIn;
+            lastCheckIn = null;
+          }
+        });
+
+        const hours = Math.floor(totalMs / (1000 * 60 * 60));
+        const minutes = Math.floor(
+          (totalMs % (1000 * 60 * 60)) / (1000 * 60)
+        );
+
+        // Render UI
+        const dayBlock = document.createElement("div");
+        dayBlock.className = "log-item";
+        dayBlock.innerHTML = `
+          <span>${date}</span>
+          <small>${hours}h ${minutes}m</small>
+        `;
+
+        logList.appendChild(dayBlock);
+      }
+    })
+    .catch(err => {
       console.error("Load logs error:", err);
     });
 }
