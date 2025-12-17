@@ -8,40 +8,46 @@
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginBox" class="card center">
-  <h2>Login</h2>
+<div class="auth-container" id="authBox">
+  <h1>B-log Tracker</h1>
+  <p class="sub">Track your daily work cleanly</p>
+
   <input id="email" type="email" placeholder="Email" />
   <input id="password" type="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
-  <p id="loginError"></p>
+
+  <button class="primary" onclick="login()">Login</button>
+  <button onclick="signup()">Create Account</button>
+
+  <div class="divider">OR</div>
+
+  <button class="google" onclick="googleLogin()">Continue with Google</button>
+
+  <p id="authError"></p>
 </div>
 
-<!-- APP -->
 <div id="app" class="hidden">
   <header class="topbar">
     <div>B-log Tracker</div>
     <button onclick="logout()">Logout</button>
   </header>
 
-  <div class="container">
-    <div class="card">
+  <main class="container">
+    <section class="card">
       <h2>Actions</h2>
       <div class="buttons">
         <button class="check-in" onclick="logAction('Check In')">Check In</button>
         <button class="check-out" onclick="logAction('Check Out')">Check Out</button>
       </div>
       <p id="message"></p>
-    </div>
+    </section>
 
-    <div class="card">
+    <section class="card">
       <h2>Attendance Log</h2>
       <div id="logList"></div>
-    </div>
-  </div>
+    </section>
+  </main>
 </div>
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
