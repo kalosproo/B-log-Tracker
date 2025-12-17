@@ -375,4 +375,11 @@ input {
 .log-item small {
   color: #9ca3af;
 }
+  /* disable button */
+  button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(30%);
+}
+
 
