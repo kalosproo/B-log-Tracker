@@ -1,25 +1,23 @@
 let streamRef = null;
 
 function startCamera(actionType) {
-
-  // 1. Start camera (for visual proof only)
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
       streamRef = stream;
       const video = document.getElementById("video");
-        // 👇 ADD THESE LINES
-  document.getElementById("cameraPlaceholder").style.display = "none";
-  video.style.display = "block";
+
+      document.getElementById("cameraPlaceholder").style.display = "none";
+      video.style.display = "block";
 
       video.srcObject = stream;
       video.play();
+
+      // ⏱️ Wait a moment for a real frame
+      setTimeout(() => saveLog(actionType), 800);
     })
     .catch(err => {
       console.warn("Camera warning:", err.message);
     });
-
-  // 2. SAVE LOG IMMEDIATELY (do NOT wait for camera)
-  saveLog(actionType);
 }
 
 function saveLog(actionType) {
@@ -37,9 +35,9 @@ function saveLog(actionType) {
     const fileName = `logs/${now.getTime()}_${actionType}.jpg`;
     const ref = storage.ref().child(fileName);
 
-    ref.put(blob).then(snapshot => {
-      snapshot.ref.getDownloadURL().then(photoURL => {
-
+    ref.put(blob)
+      .then(snapshot => snapshot.ref.getDownloadURL())
+      .then(photoURL => {
         const logData = {
           action: actionType,
           date: now.toLocaleDateString(),
@@ -48,35 +46,30 @@ function saveLog(actionType) {
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        db.collection("logs").add(logData).then(() => {
-          document.getElementById("message").innerText =
-            actionType + " + photo saved";
+        return db.collection("logs").add(logData);
+      })
+      .then(() => {
+        document.getElementById("message").innerText =
+          actionType + " + photo saved";
 
-          loadLogs();
-          stopCamera(); // ✅ ONLY ONCE
-        });
-
+        loadLogs();
+        stopCamera();
+      })
+      .catch(err => {
+        console.error("Save error:", err);
+        alert("Photo or log failed. Check console.");
       });
-    });
   }, "image/jpeg");
-}
-
-
-    })
-    .catch(err => {
-      console.error("Firestore ERROR:", err);
-      alert("Log not saved. Check console.");
-    });
 }
 
 function stopCamera() {
   if (streamRef) {
     streamRef.getTracks().forEach(track => track.stop());
-    document.getElementById("video").style.display = "none";
-document.getElementById("cameraPlaceholder").style.display = "flex";
-
     streamRef = null;
   }
+
+  document.getElementById("video").style.display = "none";
+  document.getElementById("cameraPlaceholder").style.display = "flex";
 }
 
 function loadLogs() {
@@ -103,9 +96,6 @@ function loadLogs() {
         `;
         list.appendChild(row);
       });
-    })
-    .catch(err => {
-      console.error("Load logs error:", err);
     });
 }
 
