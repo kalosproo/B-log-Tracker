@@ -1,3 +1,4 @@
+// ---------- ELEMENTS ----------
 const authBox = document.getElementById("authBox");
 const app = document.getElementById("app");
 const loginForm = document.getElementById("login-form");
@@ -6,10 +7,16 @@ const signupForm = document.getElementById("signup-form");
 const tabLogin = document.getElementById("tab-login");
 const tabSignup = document.getElementById("tab-signup");
 
+const checkInBtn = document.getElementById("checkInBtn");
+const checkOutBtn = document.getElementById("checkOutBtn");
+
+const message = document.getElementById("message");
+const logList = document.getElementById("logList");
+
+// ---------- AUTH TABS ----------
 function showLogin() {
   loginForm.classList.remove("hidden");
   signupForm.classList.add("hidden");
-
   tabLogin.classList.add("active");
   tabSignup.classList.remove("active");
 }
@@ -17,12 +24,11 @@ function showLogin() {
 function showSignup() {
   signupForm.classList.remove("hidden");
   loginForm.classList.add("hidden");
-
   tabSignup.classList.add("active");
   tabLogin.classList.remove("active");
 }
 
-
+// ---------- AUTH STATE ----------
 auth.onAuthStateChanged(user => {
   if (user) {
     authBox.classList.add("hidden");
@@ -34,113 +40,109 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Email login
+// ---------- LOGIN / SIGNUP ----------
 function login() {
   auth.signInWithEmailAndPassword(email.value, password.value)
     .catch(err => authError.innerText = err.message);
 }
 
-// Sign up
 function signup() {
   auth.createUserWithEmailAndPassword(email.value, password.value)
     .catch(err => authError.innerText = err.message);
 }
 
-// Google login
 function googleLogin() {
   auth.signInWithPopup(provider)
     .catch(err => authError.innerText = err.message);
 }
 
-// Logout
 function logout() {
   auth.signOut();
 }
 
-// Log action
+// ---------- BUTTON STATE ----------
+function updateButtonState(lastAction) {
+  if (lastAction === "Check In") {
+    checkInBtn.disabled = true;
+    checkOutBtn.disabled = false;
+  } else {
+    checkInBtn.disabled = false;
+    checkOutBtn.disabled = true;
+  }
+}
+
+// ---------- LOG ACTION ----------
 function logAction(type) {
   if (!auth.currentUser) {
     alert("User not logged in");
     return;
   }
 
+  // prevent double click spam
+  checkInBtn.disabled = true;
+  checkOutBtn.disabled = true;
+
   const now = new Date();
-  console.log("Logging for UID:", auth.currentUser.uid);
-
-  db.collection("logs").add({
-    user: auth.currentUser.uid,
-    action: type,
-    date: now.toLocaleDateString(),
-    time: now.toLocaleTimeString(),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
-    message.innerText = type + " recorded";
-    loadLogs();
-  }).catch(err => {
-    console.error("Log save error:", err);
-  });
-}
-
-
-// Load logs
-function loadLogs() {
-  const uid = auth.currentUser.uid;
 
   db.collection("logs")
-    .where("user", "==", uid)
-    .orderBy("createdAt", "asc")
-    .get()
-    .then(snapshot => {
-      const logList = document.getElementById("logList");
-      logList.innerHTML = "";
-
-      const grouped = {};
-
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (!data.createdAt) return;
-
-        const date = data.createdAt.toDate().toLocaleDateString();
-
-        if (!grouped[date]) grouped[date] = [];
-        grouped[date].push(data);
-      });
-
-      // Process each day
-      for (const date in grouped) {
-        let totalMs = 0;
-        let lastCheckIn = null;
-
-        grouped[date].forEach(log => {
-          const time = log.createdAt.toDate();
-
-          if (log.action === "Check In") {
-            lastCheckIn = time;
-          }
-
-          if (log.action === "Check Out" && lastCheckIn) {
-            totalMs += time - lastCheckIn;
-            lastCheckIn = null;
-          }
-        });
-
-        const hours = Math.floor(totalMs / (1000 * 60 * 60));
-        const minutes = Math.floor(
-          (totalMs % (1000 * 60 * 60)) / (1000 * 60)
-        );
-
-        // Render UI
-        const dayBlock = document.createElement("div");
-        dayBlock.className = "log-item";
-        dayBlock.innerHTML = `
-          <span>${date}</span>
-          <small>${hours}h ${minutes}m</small>
-        `;
-
-        logList.appendChild(dayBlock);
-      }
+    .add({
+      user: auth.currentUser.uid,
+      action: type,
+      date: now.toLocaleDateString(),
+      time: now.toLocaleTimeString(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      message.innerText = type + " recorded";
+      updateButtonState(type);
+      loadLogs();
     })
     .catch(err => {
-      console.error("Load logs error:", err);
+      console.error("Log save error:", err);
+      message.innerText = "Failed to save log";
+      // fallback state
+      updateButtonState(type === "Check In" ? "Check Out" : "Check In");
     });
+}
+
+// ---------- LOAD LOGS ----------
+function loadLogs() {
+  if (!auth.currentUser) return;
+
+  // Restore last button state
+  db.collection("logs")
+    .where("user", "==", auth.currentUser.uid)
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const lastAction = snapshot.docs[0].data().action;
+        updateButtonState(lastAction);
+      } else {
+        // first time user
+        checkInBtn.disabled = false;
+        checkOutBtn.disabled = true;
+      }
+    })
+    .catch(err => console.error("Load last action error:", err));
+
+  // Load full log list
+  db.collection("logs")
+    .where("user", "==", auth.currentUser.uid)
+    .orderBy("createdAt", "desc")
+    .get()
+    .then(snapshot => {
+      logList.innerHTML = "";
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        logList.innerHTML += `
+          <div class="log-item">
+            <span>${d.action}</span>
+            <small>${d.date} • ${d.time}</small>
+          </div>
+        `;
+      });
+    })
+    .catch(err => console.error("Load logs error:", err));
 }
