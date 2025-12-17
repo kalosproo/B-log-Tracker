@@ -1,87 +1,40 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
-  font-family: Inter, Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background: #0b1220;
   color: #e5e7eb;
 }
 
-.topbar {
-  height: 56px;
-  background: #020617;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
+.hidden {
+  display: none;
 }
 
-.brand {
-  font-weight: 600;
-}
-
-.status {
-  font-size: 13px;
-  color: #22c55e;
-}
-
-.container {
-  max-width: 960px;
-  margin: 20px auto;
-  padding: 0 16px;
-  display: grid;
-  gap: 20px;
+.center {
+  max-width: 320px;
+  margin: 100px auto;
 }
 
 .card {
   background: #020617;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 18px;
-}
-
-.hint {
-  font-size: 13px;
-  color: #9ca3af;
-  margin-bottom: 12px;
-}
-
-.camera-box {
-  position: relative;
   border-radius: 12px;
-  overflow: hidden;
-  background: black;
+  padding: 20px;
+  margin: 16px;
 }
 
-video {
+input {
   width: 100%;
-  display: none;
-}
-
-.camera-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 240px;
-  color: #9ca3af;
-  font-size: 14px;
-}
-
-.buttons {
-  display: flex;
-  gap: 12px;
-  margin-top: 14px;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
 }
 
 button {
-  flex: 1;
+  width: 100%;
   padding: 12px;
-  border-radius: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
   border: none;
-  font-size: 14px;
   cursor: pointer;
 }
 
@@ -95,20 +48,21 @@ button {
   color: white;
 }
 
-#message {
-  margin-top: 10px;
-  font-size: 13px;
-  color: #22c55e;
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #020617;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .log-item {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  font-size: 13px;
-}
-
-.log-item span {
-  color: #9ca3af;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
