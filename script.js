@@ -109,9 +109,11 @@ function logAction(type) {
 function loadLogs() {
   if (!auth.currentUser) return;
 
-  // Restore button state
+  const uid = auth.currentUser.uid;
+
+  // 🔁 Restore button state
   db.collection("logs")
-    .where("user", "==", auth.currentUser.uid)
+    .where("user", "==", uid)
     .orderBy("createdAt", "desc")
     .limit(1)
     .get()
@@ -124,21 +126,66 @@ function loadLogs() {
       }
     });
 
-  // Load full logs
+  // 📜 Load all logs
   db.collection("logs")
-    .where("user", "==", auth.currentUser.uid)
-    .orderBy("createdAt", "desc")
+    .where("user", "==", uid)
+    .orderBy("createdAt", "asc")
     .get()
     .then(snapshot => {
       logList.innerHTML = "";
+
+      const grouped = {};
+
       snapshot.forEach(doc => {
         const d = doc.data();
-        logList.innerHTML += `
-          <div class="log-item">
-            <span>${d.action}</span>
-            <small>${d.date} • ${d.time}</small>
-          </div>
+        if (!d.createdAt) return;
+
+        const dateKey = d.date;
+        if (!grouped[dateKey]) grouped[dateKey] = [];
+
+        grouped[dateKey].push({
+          action: d.action,
+          time: d.createdAt.toDate()
+        });
+      });
+
+      // 🔢 Build UI (latest day first)
+      Object.keys(grouped).reverse().forEach(date => {
+        let totalMs = 0;
+        let lastCheckIn = null;
+
+        grouped[date].forEach(e => {
+          if (e.action === "Check In") {
+            lastCheckIn = e.time;
+          }
+          if (e.action === "Check Out" && lastCheckIn) {
+            totalMs += e.time - lastCheckIn;
+            lastCheckIn = null;
+          }
+        });
+
+        const hours = Math.floor(totalMs / (1000 * 60 * 60));
+        const minutes = Math.floor((totalMs / (1000 * 60)) % 60);
+
+        let html = `
+          <div class="log-day">
+            <div class="log-day-header">
+              <span>${date}</span>
+              <strong>${hours}h ${minutes}m</strong>
+            </div>
         `;
+
+        grouped[date].forEach(e => {
+          html += `
+            <div class="log-row">
+              <span>${e.action}</span>
+              <small>${e.time.toLocaleTimeString()}</small>
+            </div>
+          `;
+        });
+
+        html += `</div>`;
+        logList.innerHTML += html;
       });
     });
 }
