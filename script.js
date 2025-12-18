@@ -46,13 +46,17 @@ auth.onAuthStateChanged(user => {
 
 // ---------- LOGIN ----------
 function login() {
-  auth.signInWithEmailAndPassword(email.value, password.value)
-    .catch(err => authError.innerText = err.message);
+  auth.signInWithEmailAndPassword(
+    email.value,
+    password.value
+  ).catch(err => authError.innerText = err.message);
 }
 
 function signup() {
-  auth.createUserWithEmailAndPassword(signupEmail.value, signupPassword.value)
-    .catch(err => authError.innerText = err.message);
+  auth.createUserWithEmailAndPassword(
+    signupEmail.value,
+    signupPassword.value
+  ).catch(err => authError.innerText = err.message);
 }
 
 function googleLogin() {
@@ -81,6 +85,9 @@ function updateButtonState(lastAction) {
 function logAction(type) {
   if (!auth.currentUser) return;
 
+  checkInBtn.disabled = true;
+  checkOutBtn.disabled = true;
+
   const now = new Date();
 
   db.collection("logs").add({
@@ -89,13 +96,11 @@ function logAction(type) {
     date: now.toLocaleDateString(),
     time: now.toLocaleTimeString(),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
+  }).then(() => {
     message.innerText = type + " recorded";
     updateButtonState(type);
     loadLogs();
-  })
-  .catch(() => {
+  }).catch(() => {
     message.innerText = "Error saving log";
   });
 }
@@ -104,11 +109,9 @@ function logAction(type) {
 function loadLogs() {
   if (!auth.currentUser) return;
 
-  const uid = auth.currentUser.uid;
-
   // Restore button state
   db.collection("logs")
-    .where("user", "==", uid)
+    .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
     .limit(1)
     .get()
@@ -121,79 +124,21 @@ function loadLogs() {
       }
     });
 
-  // Load logs
+  // Load full logs
   db.collection("logs")
-    .where("user", "==", uid)
-    .orderBy("createdAt", "asc")
+    .where("user", "==", auth.currentUser.uid)
+    .orderBy("createdAt", "desc")
     .get()
     .then(snapshot => {
       logList.innerHTML = "";
-
-      const grouped = {};
-
       snapshot.forEach(doc => {
         const d = doc.data();
-        if (!d.createdAt) return;
-
-        const dateKey = d.date;
-        if (!grouped[dateKey]) grouped[dateKey] = [];
-
-        grouped[dateKey].push({
-          id: doc.id,
-          action: d.action,
-          time: d.createdAt.toDate()
-        });
-      });
-
-      Object.keys(grouped).reverse().forEach(date => {
-        let totalMs = 0;
-        let lastCheckIn = null;
-
-        grouped[date].forEach(e => {
-          if (e.action === "Check In") lastCheckIn = e.time;
-          if (e.action === "Check Out" && lastCheckIn) {
-            totalMs += e.time - lastCheckIn;
-            lastCheckIn = null;
-          }
-        });
-
-        const hours = Math.floor(totalMs / (1000 * 60 * 60));
-        const minutes = Math.floor((totalMs / (1000 * 60)) % 60);
-
-        let html = `
-          <div class="log-day">
-            <div class="log-day-header">
-              <span>${date}</span>
-              <strong>${hours}h ${minutes}m</strong>
-            </div>
+        logList.innerHTML += `
+          <div class="log-item">
+            <span>${d.action}</span>
+            <small>${d.date} • ${d.time}</small>
+          </div>
         `;
-
-        grouped[date].forEach(e => {
-          html += `
-            <div class="log-row">
-              <span>${e.action}</span>
-              <small>${e.time.toLocaleTimeString()}</small>
-              <button class="delete-btn" onclick="deleteLog('${e.id}')">🗑</button>
-            </div>
-          `;
-        });
-
-        html += `</div>`;
-        logList.innerHTML += html;
       });
-    });
-}
-
-// ---------- DELETE ----------
-function deleteLog(logId) {
-  if (!confirm("Delete this log?")) return;
-
-  db.collection("logs")
-    .doc(logId)
-    .delete()
-    .then(loadLogs)
-    .catch(err => {
-      alert("Failed to delete log");
-      console.error(err);
     });
 }
