@@ -106,12 +106,12 @@ function logAction(type) {
 }
 
 // ---------- LOAD LOGS ----------
-function loadLogs() {
+ffunction loadLogs() {
   if (!auth.currentUser) return;
 
   const uid = auth.currentUser.uid;
 
-  // 🔁 Restore button state
+  // Restore button state
   db.collection("logs")
     .where("user", "==", uid)
     .orderBy("createdAt", "desc")
@@ -126,7 +126,7 @@ function loadLogs() {
       }
     });
 
-  // 📜 Load all logs
+  // Load logs
   db.collection("logs")
     .where("user", "==", uid)
     .orderBy("createdAt", "asc")
@@ -144,20 +144,18 @@ function loadLogs() {
         if (!grouped[dateKey]) grouped[dateKey] = [];
 
         grouped[dateKey].push({
+          id: doc.id, // 🔑 document id
           action: d.action,
           time: d.createdAt.toDate()
         });
       });
 
-      // 🔢 Build UI (latest day first)
       Object.keys(grouped).reverse().forEach(date => {
         let totalMs = 0;
         let lastCheckIn = null;
 
         grouped[date].forEach(e => {
-          if (e.action === "Check In") {
-            lastCheckIn = e.time;
-          }
+          if (e.action === "Check In") lastCheckIn = e.time;
           if (e.action === "Check Out" && lastCheckIn) {
             totalMs += e.time - lastCheckIn;
             lastCheckIn = null;
@@ -180,6 +178,7 @@ function loadLogs() {
             <div class="log-row">
               <span>${e.action}</span>
               <small>${e.time.toLocaleTimeString()}</small>
+              <button class="delete-btn" onclick="deleteLog('${e.id}')">🗑</button>
             </div>
           `;
         });
