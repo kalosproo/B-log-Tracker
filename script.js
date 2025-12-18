@@ -46,17 +46,13 @@ auth.onAuthStateChanged(user => {
 
 // ---------- LOGIN ----------
 function login() {
-  auth.signInWithEmailAndPassword(
-    email.value,
-    password.value
-  ).catch(err => authError.innerText = err.message);
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => authError.innerText = err.message);
 }
 
 function signup() {
-  auth.createUserWithEmailAndPassword(
-    signupEmail.value,
-    signupPassword.value
-  ).catch(err => authError.innerText = err.message);
+  auth.createUserWithEmailAndPassword(signupEmail.value, signupPassword.value)
+    .catch(err => authError.innerText = err.message);
 }
 
 function googleLogin() {
@@ -85,9 +81,6 @@ function updateButtonState(lastAction) {
 function logAction(type) {
   if (!auth.currentUser) return;
 
-  checkInBtn.disabled = true;
-  checkOutBtn.disabled = true;
-
   const now = new Date();
 
   db.collection("logs").add({
@@ -96,17 +89,19 @@ function logAction(type) {
     date: now.toLocaleDateString(),
     time: now.toLocaleTimeString(),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => {
+  })
+  .then(() => {
     message.innerText = type + " recorded";
     updateButtonState(type);
     loadLogs();
-  }).catch(() => {
+  })
+  .catch(() => {
     message.innerText = "Error saving log";
   });
 }
 
 // ---------- LOAD LOGS ----------
-ffunction loadLogs() {
+function loadLogs() {
   if (!auth.currentUser) return;
 
   const uid = auth.currentUser.uid;
@@ -144,7 +139,7 @@ ffunction loadLogs() {
         if (!grouped[dateKey]) grouped[dateKey] = [];
 
         grouped[dateKey].push({
-          id: doc.id, // 🔑 document id
+          id: doc.id,
           action: d.action,
           time: d.createdAt.toDate()
         });
@@ -188,16 +183,15 @@ ffunction loadLogs() {
       });
     });
 }
-//-----------------Delete Button------------
+
+// ---------- DELETE ----------
 function deleteLog(logId) {
   if (!confirm("Delete this log?")) return;
 
   db.collection("logs")
     .doc(logId)
     .delete()
-    .then(() => {
-      loadLogs();
-    })
+    .then(loadLogs)
     .catch(err => {
       alert("Failed to delete log");
       console.error(err);
