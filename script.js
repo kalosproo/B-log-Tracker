@@ -10,7 +10,6 @@ const tabSignup = document.getElementById("tab-signup");
 const message = document.getElementById("message");
 const logList = document.getElementById("logList");
 
-// buttons will be fetched AFTER DOM loads
 let checkInBtn;
 let checkOutBtn;
 
@@ -35,7 +34,6 @@ auth.onAuthStateChanged(user => {
     authBox.classList.add("hidden");
     app.classList.remove("hidden");
 
-    // get buttons AFTER app visible
     checkInBtn = document.getElementById("checkInBtn");
     checkOutBtn = document.getElementById("checkOutBtn");
 
@@ -48,13 +46,17 @@ auth.onAuthStateChanged(user => {
 
 // ---------- LOGIN ----------
 function login() {
-  auth.signInWithEmailAndPassword(email.value, password.value)
-    .catch(err => authError.innerText = err.message);
+  auth.signInWithEmailAndPassword(
+    email.value,
+    password.value
+  ).catch(err => authError.innerText = err.message);
 }
 
 function signup() {
-  auth.createUserWithEmailAndPassword(email.value, password.value)
-    .catch(err => authError.innerText = err.message);
+  auth.createUserWithEmailAndPassword(
+    signupEmail.value,
+    signupPassword.value
+  ).catch(err => authError.innerText = err.message);
 }
 
 function googleLogin() {
@@ -81,14 +83,8 @@ function updateButtonState(lastAction) {
 
 // ---------- LOG ACTION ----------
 function logAction(type) {
-  if (!auth.currentUser) {
-    alert("User not logged in");
-    return;
-  }
+  if (!auth.currentUser) return;
 
-  if (!checkInBtn || !checkOutBtn) return;
-
-  // lock both during save
   checkInBtn.disabled = true;
   checkOutBtn.disabled = true;
 
@@ -100,16 +96,12 @@ function logAction(type) {
     date: now.toLocaleDateString(),
     time: now.toLocaleTimeString(),
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
+  }).then(() => {
     message.innerText = type + " recorded";
     updateButtonState(type);
     loadLogs();
-  })
-  .catch(err => {
-    console.error("Log save error:", err);
-    message.innerText = "Failed to save log";
-    updateButtonState(type === "Check In" ? "Check Out" : "Check In");
+  }).catch(() => {
+    message.innerText = "Error saving log";
   });
 }
 
@@ -117,7 +109,7 @@ function logAction(type) {
 function loadLogs() {
   if (!auth.currentUser) return;
 
-  // last action → button restore
+  // Restore button state
   db.collection("logs")
     .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
@@ -132,7 +124,7 @@ function loadLogs() {
       }
     });
 
-  // full log list
+  // Load full logs
   db.collection("logs")
     .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
