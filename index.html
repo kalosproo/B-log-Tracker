@@ -24,40 +24,55 @@
   <div id="login-form">
     <input id="email" type="email" placeholder="Email" />
     <input id="password" type="password" placeholder="Password" />
-
     <button class="primary" onclick="login()">Sign In</button>
   </div>
 
   <!-- SIGNUP FORM -->
   <div id="signup-form" class="hidden">
-    <input id="signupEmail" type="email" placeholder="Email" />
-    <input id="signupPassword" type="password" placeholder="Password" />
-
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
     <button class="primary" onclick="signup()">Create Account</button>
   </div>
 
   <div class="divider">OR</div>
 
-  <button class="google" onclick="googleLogin()">
-    Continue with Google
-  </button>
+  <button class="google" onclick="googleLogin()">Continue with Google</button>
 
   <p id="authError"></p>
 </div>
 
+<!-- ================= APP ================= -->
 <div id="app" class="hidden">
+
   <header class="topbar">
     <div>B-log Tracker</div>
     <button onclick="logout()">Logout</button>
   </header>
 
   <main class="container">
+
     <section class="card">
       <h2>Actions</h2>
+
       <div class="buttons">
-        <button class="check-in" onclick="logAction('Check In')">Check In</button>
-        <button class="check-out" onclick="logAction('Check Out')">Check Out</button>
+        <!-- 🔑 IDs added -->
+        <button
+          id="checkInBtn"
+          class="check-in"
+          onclick="logAction('Check In')"
+        >
+          Check In
+        </button>
+
+        <button
+          id="checkOutBtn"
+          class="check-out"
+          onclick="logAction('Check Out')"
+        >
+          Check Out
+        </button>
       </div>
+
       <p id="message"></p>
     </section>
 
@@ -65,9 +80,11 @@
       <h2>Attendance Log</h2>
       <div id="logList"></div>
     </section>
+
   </main>
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
