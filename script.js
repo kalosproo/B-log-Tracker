@@ -109,9 +109,11 @@ function logAction(type) {
 function loadLogs() {
   if (!auth.currentUser) return;
 
-  // Restore button state
+  const uid = auth.currentUser.uid;
+
+  // 1️⃣ Restore button state (last action)
   db.collection("logs")
-    .where("user", "==", auth.currentUser.uid)
+    .where("user", "==", uid)
     .orderBy("createdAt", "desc")
     .limit(1)
     .get()
@@ -124,19 +126,55 @@ function loadLogs() {
       }
     });
 
-  // Load full logs
+  // 2️⃣ Load ALL logs and calculate hours
   db.collection("logs")
-    .where("user", "==", auth.currentUser.uid)
-    .orderBy("createdAt", "desc")
+    .where("user", "==", uid)
+    .orderBy("createdAt", "asc")
     .get()
     .then(snapshot => {
       logList.innerHTML = "";
+
+      const dayMap = {};
+
       snapshot.forEach(doc => {
         const d = doc.data();
+        if (!d.createdAt) return;
+
+        const dateKey = d.date;
+
+        if (!dayMap[dateKey]) {
+          dayMap[dateKey] = [];
+        }
+
+        dayMap[dateKey].push({
+          action: d.action,
+          time: d.createdAt.toDate()
+        });
+      });
+
+      // 3️⃣ Calculate per day
+      Object.keys(dayMap).reverse().forEach(date => {
+        const entries = dayMap[date];
+        let totalMs = 0;
+        let lastCheckIn = null;
+
+        entries.forEach(e => {
+          if (e.action === "Check In") {
+            lastCheckIn = e.time;
+          }
+          if (e.action === "Check Out" && lastCheckIn) {
+            totalMs += e.time - lastCheckIn;
+            lastCheckIn = null;
+          }
+        });
+
+        const hours = Math.floor(totalMs / (1000 * 60 * 60));
+        const minutes = Math.floor((totalMs / (1000 * 60)) % 60);
+
         logList.innerHTML += `
           <div class="log-item">
-            <span>${d.action}</span>
-            <small>${d.date} • ${d.time}</small>
+            <span>${date}</span>
+            <small>${hours}h ${minutes}m</small>
           </div>
         `;
       });
