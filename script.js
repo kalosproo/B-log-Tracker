@@ -46,24 +46,25 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// Email login
+// ---------- LOGIN ----------
 function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-
-  auth.signInWithEmailAndPassword(email, password)
+  auth.signInWithEmailAndPassword(email.value, password.value)
     .catch(err => authError.innerText = err.message);
 }
 
-// Sign up
 function signup() {
-  const email = document.getElementById("signupEmail").value;
-  const password = document.getElementById("signupPassword").value;
-
-  auth.createUserWithEmailAndPassword(email, password)
+  auth.createUserWithEmailAndPassword(email.value, password.value)
     .catch(err => authError.innerText = err.message);
 }
 
+function googleLogin() {
+  auth.signInWithPopup(provider)
+    .catch(err => authError.innerText = err.message);
+}
+
+function logout() {
+  auth.signOut();
+}
 
 // ---------- BUTTON STATE ----------
 function updateButtonState(lastAction) {
