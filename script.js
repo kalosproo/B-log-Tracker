@@ -7,11 +7,12 @@ const signupForm = document.getElementById("signup-form");
 const tabLogin = document.getElementById("tab-login");
 const tabSignup = document.getElementById("tab-signup");
 
-const checkInBtn = document.getElementById("checkInBtn");
-const checkOutBtn = document.getElementById("checkOutBtn");
-
 const message = document.getElementById("message");
 const logList = document.getElementById("logList");
+
+// buttons will be fetched AFTER DOM loads
+let checkInBtn;
+let checkOutBtn;
 
 // ---------- AUTH TABS ----------
 function showLogin() {
@@ -33,6 +34,11 @@ auth.onAuthStateChanged(user => {
   if (user) {
     authBox.classList.add("hidden");
     app.classList.remove("hidden");
+
+    // get buttons AFTER app visible
+    checkInBtn = document.getElementById("checkInBtn");
+    checkOutBtn = document.getElementById("checkOutBtn");
+
     loadLogs();
   } else {
     app.classList.add("hidden");
@@ -40,7 +46,7 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-// ---------- LOGIN / SIGNUP ----------
+// ---------- LOGIN ----------
 function login() {
   auth.signInWithEmailAndPassword(email.value, password.value)
     .catch(err => authError.innerText = err.message);
@@ -62,6 +68,8 @@ function logout() {
 
 // ---------- BUTTON STATE ----------
 function updateButtonState(lastAction) {
+  if (!checkInBtn || !checkOutBtn) return;
+
   if (lastAction === "Check In") {
     checkInBtn.disabled = true;
     checkOutBtn.disabled = false;
@@ -78,38 +86,38 @@ function logAction(type) {
     return;
   }
 
-  // prevent double click spam
+  if (!checkInBtn || !checkOutBtn) return;
+
+  // lock both during save
   checkInBtn.disabled = true;
   checkOutBtn.disabled = true;
 
   const now = new Date();
 
-  db.collection("logs")
-    .add({
-      user: auth.currentUser.uid,
-      action: type,
-      date: now.toLocaleDateString(),
-      time: now.toLocaleTimeString(),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(() => {
-      message.innerText = type + " recorded";
-      updateButtonState(type);
-      loadLogs();
-    })
-    .catch(err => {
-      console.error("Log save error:", err);
-      message.innerText = "Failed to save log";
-      // fallback state
-      updateButtonState(type === "Check In" ? "Check Out" : "Check In");
-    });
+  db.collection("logs").add({
+    user: auth.currentUser.uid,
+    action: type,
+    date: now.toLocaleDateString(),
+    time: now.toLocaleTimeString(),
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    message.innerText = type + " recorded";
+    updateButtonState(type);
+    loadLogs();
+  })
+  .catch(err => {
+    console.error("Log save error:", err);
+    message.innerText = "Failed to save log";
+    updateButtonState(type === "Check In" ? "Check Out" : "Check In");
+  });
 }
 
 // ---------- LOAD LOGS ----------
 function loadLogs() {
   if (!auth.currentUser) return;
 
-  // Restore last button state
+  // last action → button restore
   db.collection("logs")
     .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
@@ -117,17 +125,14 @@ function loadLogs() {
     .get()
     .then(snapshot => {
       if (!snapshot.empty) {
-        const lastAction = snapshot.docs[0].data().action;
-        updateButtonState(lastAction);
+        updateButtonState(snapshot.docs[0].data().action);
       } else {
-        // first time user
         checkInBtn.disabled = false;
         checkOutBtn.disabled = true;
       }
-    })
-    .catch(err => console.error("Load last action error:", err));
+    });
 
-  // Load full log list
+  // full log list
   db.collection("logs")
     .where("user", "==", auth.currentUser.uid)
     .orderBy("createdAt", "desc")
@@ -143,6 +148,5 @@ function loadLogs() {
           </div>
         `;
       });
-    })
-    .catch(err => console.error("Load logs error:", err));
+    });
 }
