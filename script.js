@@ -188,3 +188,18 @@ ffunction loadLogs() {
       });
     });
 }
+//-----------------Delete Button------------
+function deleteLog(logId) {
+  if (!confirm("Delete this log?")) return;
+
+  db.collection("logs")
+    .doc(logId)
+    .delete()
+    .then(() => {
+      loadLogs();
+    })
+    .catch(err => {
+      alert("Failed to delete log");
+      console.error(err);
+    });
+}
