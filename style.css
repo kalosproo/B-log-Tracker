@@ -488,4 +488,50 @@ input {
   font-size: 13px;
   cursor: pointer;
 }
+/* ---------- PROFILE DROPDOWN ---------- */
+.profile {
+  position: relative;
+  cursor: pointer;
+}
 
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: 120%;
+  width: 220px;
+  background: #020617;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  padding: 12px;
+  z-index: 50;
+}
+
+.profile-menu-header {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.profile-menu-header strong {
+  display: block;
+  font-size: 14px;
+}
+
+.profile-menu-header small {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.profile-menu-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.profile-menu-item:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.profile-menu-item.danger {
+  color: #ef4444;
+}
