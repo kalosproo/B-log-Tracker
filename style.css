@@ -457,5 +457,35 @@ input {
   font-size: 13px;
   color: #9ca3af;
 }
+/* ---------- PROFILE ---------- */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
+.profile-info {
+  text-align: right;
+  line-height: 1.2;
+}
+
+.profile-info span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-info small {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
 
