@@ -39,7 +39,12 @@ auth.onAuthStateChanged(user => {
 
     checkInBtn = document.getElementById("checkInBtn");
     checkOutBtn = document.getElementById("checkOutBtn");
+// ---------- PROFILE INFO ----------
+const profileName = document.getElementById("profileName");
+const profileEmail = document.getElementById("profileEmail");
 
+profileName.innerText = user.displayName || "User";
+profileEmail.innerText = user.email;
     loadLogs();
   } else {
     app.classList.add("hidden");
