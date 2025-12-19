@@ -15,7 +15,16 @@ const logList = document.getElementById("logList");
 
 let checkInBtn;
 let checkOutBtn;
+//-----------Profile Dropdown------
+function toggleProfileMenu(event) {
+  event.stopPropagation();
+  const menu = document.getElementById("profileMenu");
+  menu.classList.toggle("hidden");
+}
 
+function viewProfile() {
+  alert("Profile details coming soon 😊");
+}
 // ---------- AUTH TABS ----------
 function showLogin() {
   loginForm.classList.remove("hidden");
@@ -42,7 +51,13 @@ auth.onAuthStateChanged(user => {
 // ---------- PROFILE INFO ----------
 const profileName = document.getElementById("profileName");
 const profileEmail = document.getElementById("profileEmail");
-
+document.getElementById("menuName").innerText =
+  user.displayName || "User";
+document.getElementById("menuEmail").innerText = user.email;
+    document.addEventListener("click", () => {
+  const menu = document.getElementById("profileMenu");
+  if (menu) menu.classList.add("hidden");
+});
 profileName.innerText = user.displayName || "User";
 profileEmail.innerText = user.email;
     loadLogs();
