@@ -546,3 +546,10 @@ input {
     justify-content: space-between;
   }
 }
+/* Hide profile text on mobile */
+@media (max-width: 640px) {
+  .profile-info span,
+  .profile-info small {
+    display: none;
+  }
+}
