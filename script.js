@@ -1,3 +1,6 @@
+//-----------Timer card----------
+let timerInterval = null;
+let sessionStartTime = null;
 // ---------- ELEMENTS ----------
 const authBox = document.getElementById("authBox");
 const app = document.getElementById("app");
@@ -98,11 +101,61 @@ function logAction(type) {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(() => {
     message.innerText = type + " recorded";
-    updateButtonState(type);
+  if (type === "Check In" && !timerInterval) {
+  updateStatusUI(true, now);
+} else if (type === "Check Out") {
+  updateStatusUI(false);
+}
     loadLogs();
   }).catch(() => {
     message.innerText = "Error saving log";
   });
+}
+// ---------- STATUS CARD UI ----------
+function updateStatusUI(isActive, startTime = null) {
+  const dot = document.getElementById("statusDot");
+  const text = document.getElementById("statusText");
+  const startedAt = document.getElementById("startedAt");
+  if (!dot || !text || !startedAt) return;
+
+  if (isActive && startTime) {
+    dot.classList.remove("offline");
+    dot.classList.add("active");
+    text.innerText = "Active - On the Clock";
+    startedAt.innerText = "Started at " + startTime.toLocaleTimeString();
+    startLiveTimer(startTime);
+  } else {
+    dot.classList.remove("active");
+    dot.classList.add("offline");
+    text.innerText = "Offline";
+    startedAt.innerText = "Not working";
+    stopLiveTimer();
+  }
+}
+// ---------- LIVE TIMER HELPERS ----------
+function startLiveTimer(startTime) {
+  stopLiveTimer();
+  sessionStartTime = startTime;
+
+  timerInterval = setInterval(() => {
+    const now = new Date();
+    const diff = now - sessionStartTime;
+
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("liveTimer").innerText =
+      `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }, 1000);
+}
+
+function stopLiveTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  document.getElementById("liveTimer").innerText = "00:00:00";
 }
 
 // ---------- LOAD LOGS ----------
@@ -118,13 +171,21 @@ function loadLogs() {
     .limit(1)
     .get()
     .then(snapshot => {
-      if (!snapshot.empty) {
-        updateButtonState(snapshot.docs[0].data().action);
-      } else {
-        checkInBtn.disabled = false;
-        checkOutBtn.disabled = true;
-      }
-    });
+  if (!snapshot.empty) {
+    const last = snapshot.docs[0].data();
+    updateButtonState(last.action);
+
+    if (last.action === "Check In") {
+      updateStatusUI(true, last.createdAt.toDate());
+    } else {
+      updateStatusUI(false);
+    }
+  } else {
+    checkInBtn.disabled = false;
+    checkOutBtn.disabled = true;
+    updateStatusUI(false);
+  }
+});
 
   // 📜 Load all logs
   db.collection("logs")
