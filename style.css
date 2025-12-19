@@ -534,12 +534,15 @@ input {
   font-size: 14px;
 }
 
-.profile-menu-item:hover {
-  background: rgba(255,255,255,0.06);
+.profile-menu-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
 .profile-menu-item.danger {
-  color: #ef4444;
+  margin-top: 6px;
+  color: #f87171;
 }
 /* ---------- HEADER MOBILE FIX ---------- */
 .topbar {
