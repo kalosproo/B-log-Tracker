@@ -404,5 +404,17 @@ input {
 .log-row small {
   color: #9ca3af;
 }
+/*delete day log*/
+  .delete-day-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.delete-day-btn:hover {
+  color: #ef4444;
+}
 
 
