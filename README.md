@@ -81,7 +81,7 @@ service cloud.firestore {
 
 ## Author
 
-Developed by Bujji
+Developed by Muttukuru Rahul 
 
 This project emphasizes practical usability, clean UX, and incremental improvement over complexity.
 
