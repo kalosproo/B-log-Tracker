@@ -48,10 +48,16 @@
 
 <div id="app" class="hidden">
   <header class="topbar">
-    <div>B-log Tracker</div>
-    <button onclick="logout()">Logout</button>
-  </header>
+  <div class="brand">B-log Tracker</div>
 
+  <div class="profile">
+    <div class="profile-info">
+      <span id="profileName">User</span>
+      <small id="profileEmail">user@email.com</small>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+  </header>
   <main class="container">
    <!-- CURRENT STATUS -->
 <section class="card status-card">
