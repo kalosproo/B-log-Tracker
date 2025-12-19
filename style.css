@@ -416,5 +416,46 @@ input {
 .delete-day-btn:hover {
   color: #ef4444;
 }
+/* ---------- STATUS CARD ---------- */
+.status-card {
+  text-align: center;
+}
+
+.status-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #b0b8c4;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-dot.offline {
+  background: #6b7280;
+}
+
+.status-dot.active {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34,197,94,0.8);
+}
+
+.timer {
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin: 10px 0;
+}
+
+.started-at {
+  font-size: 13px;
+  color: #9ca3af;
+}
 
 
