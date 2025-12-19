@@ -535,3 +535,14 @@ input {
 .profile-menu-item.danger {
   color: #ef4444;
 }
+/* ---------- HEADER MOBILE FIX ---------- */
+.topbar {
+  min-height: 56px;
+  padding: 10px 16px;
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    justify-content: space-between;
+  }
+}
