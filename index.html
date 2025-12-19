@@ -47,17 +47,22 @@
 </div>
 
 <div id="app" class="hidden">
-  <header class="topbar">
-  <div class="brand">B-log Tracker</div>
-
-  <div class="profile">
-    <div class="profile-info">
-      <span id="profileName">User</span>
-      <small id="profileEmail">user@email.com</small>
-    </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+  <div class="profile" onclick="toggleProfileMenu(event)">
+  <div class="profile-info">
+    <span id="profileName">User</span>
+    <small id="profileEmail">user@email.com</small>
   </div>
-  </header>
+
+  <div class="profile-menu hidden" id="profileMenu">
+    <div class="profile-menu-header">
+      <strong id="menuName">User</strong>
+      <small id="menuEmail">user@email.com</small>
+    </div>
+
+    <div class="profile-menu-item" onclick="viewProfile()">View Profile</div>
+    <div class="profile-menu-item danger" onclick="logout()">Logout</div>
+  </div>
+</div>
   <main class="container">
    <!-- CURRENT STATUS -->
 <section class="card status-card">
