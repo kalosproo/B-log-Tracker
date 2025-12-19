@@ -167,13 +167,14 @@ function loadLogs() {
         const hours = Math.floor(totalMs / (1000 * 60 * 60));
         const minutes = Math.floor((totalMs / (1000 * 60)) % 60);
 
-        let html = `
-          <div class="log-day">
-            <div class="log-day-header">
-              <span>${date}</span>
-              <strong>${hours}h ${minutes}m</strong>
-            </div>
-        `;
+      let html = `
+  <div class="log-day">
+    <div class="log-day-header">
+      <span>${date}</span>
+      <strong>${hours}h ${minutes}m</strong>
+      <button class="delete-day-btn" onclick="deleteDayLogs('${date}')">🗑</button>
+    </div>
+`;
 
         grouped[date].forEach(e => {
           html += `
@@ -189,3 +190,33 @@ function loadLogs() {
       });
     });
 }
+//----------Delete day logs-----------
+function deleteDayLogs(date) {
+  if (!auth.currentUser) return;
+
+  if (!confirm(`Delete all logs for ${date}?`)) return;
+
+  const uid = auth.currentUser.uid;
+
+  db.collection("logs")
+    .where("user", "==", uid)
+    .where("date", "==", date)
+    .get()
+    .then(snapshot => {
+      const batch = db.batch();
+
+      snapshot.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      return batch.commit();
+    })
+    .then(() => {
+      loadLogs();
+    })
+    .catch(err => {
+      console.error("Delete day logs error:", err);
+      alert("Failed to delete logs");
+    });
+}
+
