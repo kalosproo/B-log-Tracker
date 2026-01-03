@@ -562,3 +562,19 @@ input {
     display: none;
   }
 }
+/*--------------------weekly&monthly report---------*/
+.summary-card {
+  margin-top: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #d1d5db;
+}
+
+.summary-row strong {
+  color: #ffffff;
+}
