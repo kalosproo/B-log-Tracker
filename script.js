@@ -229,6 +229,45 @@ function loadLogs() {
           time: d.createdAt.toDate()
         });
       });
+// ---------- WEEKLY & MONTHLY TOTAL ----------
+let weeklyMs = 0;
+let monthlyMs = 0;
+
+const now = new Date();
+const weekStart = new Date(now);
+weekStart.setDate(now.getDate() - now.getDay());
+
+const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+Object.keys(grouped).forEach(date => {
+  let lastIn = null;
+
+  grouped[date].forEach(e => {
+    if (e.action === "Check In") {
+      lastIn = e.time;
+    }
+
+    if (e.action === "Check Out" && lastIn) {
+      const diff = e.time - lastIn;
+
+      if (lastIn >= weekStart) weeklyMs += diff;
+      if (lastIn >= monthStart) monthlyMs += diff;
+
+      lastIn = null;
+    }
+  });
+});
+
+const weeklyEl = document.getElementById("weeklyTotal");
+const monthlyEl = document.getElementById("monthlyTotal");
+
+if (weeklyEl && monthlyEl) {
+  weeklyEl.innerText =
+    `${Math.floor(weeklyMs / 3600000)}h ${Math.floor((weeklyMs / 60000) % 60)}m`;
+
+  monthlyEl.innerText =
+    `${Math.floor(monthlyMs / 3600000)}h ${Math.floor((monthlyMs / 60000) % 60)}m`;
+}
 
       // 🔢 Build UI (latest day first)
       Object.keys(grouped).reverse().forEach(date => {
@@ -265,40 +304,6 @@ function loadLogs() {
             </div>
           `;
         });
-// ---------- WEEKLY & MONTHLY TOTAL ----------
-let weeklyMs = 0;
-let monthlyMs = 0;
-
-const now = new Date();
-const weekStart = new Date(now);
-weekStart.setDate(now.getDate() - now.getDay());
-
-const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-Object.keys(grouped).forEach(date => {
-  let lastIn = null;
-
-  grouped[date].forEach(e => {
-    if (e.action === "Check In") {
-      lastIn = e.time;
-    }
-
-    if (e.action === "Check Out" && lastIn) {
-      const diff = e.time - lastIn;
-
-      if (lastIn >= weekStart) weeklyMs += diff;
-      if (lastIn >= monthStart) monthlyMs += diff;
-
-      lastIn = null;
-    }
-  });
-});
-
-document.getElementById("weeklyTotal").innerText =
-  `${Math.floor(weeklyMs / 3600000)}h ${Math.floor((weeklyMs / 60000) % 60)}m`;
-
-document.getElementById("monthlyTotal").innerText =
-  `${Math.floor(monthlyMs / 3600000)}h ${Math.floor((monthlyMs / 60000) % 60)}m`;
 
         html += `</div>`;
         logList.innerHTML += html;
