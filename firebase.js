@@ -1,5 +1,5 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyCTAj_lXQrV6qvATrLnvg1o62Y4G5QeBmM",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY
   authDomain: "b-log-tracker-0101.firebaseapp.com",
   projectId: "b-log-tracker-0101",
   messagingSenderId: "230746196644",
